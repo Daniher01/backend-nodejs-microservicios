@@ -2,6 +2,7 @@ const db = {
     'user': [
         { id: '1', name: 'Daniel' },
     ],
+    'auth': []
 };
 
 async function list(tabla) {
@@ -14,7 +15,12 @@ async function get(tabla, id) {
 }
 
 async function upsert(tabla, data) {
+    if(!tabla){
+        db[tabla] = []
+    }
+
     db[tabla].push(data);
+    console.log(db);
 }
 
 async function remove(tabla, id) {
