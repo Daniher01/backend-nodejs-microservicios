@@ -1,11 +1,12 @@
 const jwt = require('jsonwebtoken')
 const config = require('../config.js');
+const error = require('../utils/error')
 const secret = config.jwt.secret;
 
-function sign(data){
-    return jwt.sign(data,secret)
-}
-
+function sign(data) {
+    let jsonData = JSON.parse(JSON.stringify(data));
+    return jwt.sign(jsonData, secret);
+  }
 
 // ? para verificar que el token tenga permisios para acceder al servicio
 
@@ -15,7 +16,7 @@ const check = {
         const decoded = jwt.verify(token, secret) 
         
         if (decoded.id !== id){
-            throw new Error("No tienes permisos")
+            throw error('No puedes hacer esto', 401)
         }
 
         console.log(decoded);

@@ -13,14 +13,12 @@ router.post('/', upsert);
 router.put('/',secure('update'), upsert);
 
 // Internal functions
-function list(req, res) {
+function list(req, res, next) {
     Controller.list()
         .then((lista) => {
             response.success(req, res, lista, 200);
         })
-        .catch((err) => {
-            response.error(req, res, err.message, 500);
-        });
+        .catch(next) // ? otra manera de manejar los errores con un middleware
     
 }
 
