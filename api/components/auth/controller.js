@@ -18,7 +18,7 @@ module.exports = function (injectedStore) {
                     // generar token
                     return auth.sign(data)
                 }else{
-                    throw new Error('Informacion invalida')
+                    throw new Error('Informacion invalida, no son iguales')
                 }
             })
 
