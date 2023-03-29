@@ -39,7 +39,7 @@ handleCon(); // ? genera la conexion
 function list(table){
     return new Promise( (resolve, reject) =>{
         connection.query(`SELECT * FROM ${table}`, (err, data) => {
-            if(err) return reject(error);
+            if(err) return reject(err);
             resolve(data)
         })
     })
@@ -55,9 +55,8 @@ function get(table, id){
 }
 
 function insert(table, data){
-    console.log(data);
     return new Promise( (resolve, reject) =>{
-        connection.query(`INSERT INTO ${table} set ? `, data, (err, data) => {
+        connection.query(`INSERT INTO ${table} set ?`, data, (err, data) => {
             if(err) return reject(err);
             resolve(data)
         })
@@ -74,9 +73,8 @@ function update(table, data){
 }
 
 const upsert = async (table, data) => {
-
     const row = await get(table, data.id);
-    
+
     if (row.length === 0) {
       return insert(table, data);
     } else {
@@ -84,19 +82,18 @@ const upsert = async (table, data) => {
     }
 }
 
-function query(table, query){
+function query(table, query, join) {
+    let joinQuery = '';
+    if (join) {
+        const key = Object.keys(join)[0];
+        const val = join[key];
+        joinQuery = `JOIN ${key} ON ${table}.${val} = ${key}.id`;
+    }
+
     return new Promise((resolve, reject) => {
-        connection.query(`SELECT * FROM ${table} WHERE ?`, query,(error, result)=>{
-            if(error) return reject(error)
-            
-            // Necesario para evitar el rowdatapacket
-            let output = {
-                id: result[0].id,
-                username: result[0].username,
-                password: result[0].password
-            }
-            
-            resolve(output, null)
+        connection.query(`SELECT * FROM ${table} ${joinQuery} WHERE ${table}.?`, query, (err, res) => {
+            if (err) return reject(err);
+            resolve(res || null);
         })
     })
 }
@@ -105,5 +102,6 @@ module.exports = {
     list,
     get,
     upsert,
+    insert,
     query,
 }

@@ -18,7 +18,15 @@ const check = {
         if (decoded.id !== id){
             throw error('No puedes hacer esto', 401)
         }
+        req.user = decoded
+        console.log(decoded);
 
+    },
+
+    logged: function(req){   
+        const token = req.headers.authorization.split(' ')[1] // ? quita la palabra 'Bearer
+        const decoded = jwt.verify(token, secret) 
+        req.user = decoded
         console.log(decoded);
 
     }
