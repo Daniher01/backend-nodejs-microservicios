@@ -1,5 +1,4 @@
 const nanoid = require('nanoid');
-const auth = require('../auth');
 
 const TABLA = 'post';
 
@@ -13,8 +12,19 @@ module.exports = function (injectedStore) {
         return store.list(TABLA);
     }
 
+    function insert(text, user){
+        post = {
+            id: nanoid(),
+            text: text,
+            user: user,
+        }
+
+        return store.insert(TABLA, post);
+    }
+
     return {
         list,
+        insert
     };
 
 }    
